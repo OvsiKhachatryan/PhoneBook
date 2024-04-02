@@ -1,0 +1,575 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Your super ApplicationAPI",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User login",
+                "description": "Authenticate a user with email and password and generate access token.",
+                "operationId": "5f90fad45b3bec06f69a5d179ce78a5f",
+                "requestBody": {
+                    "description": "User credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImU4Yj..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "description": "Registers a new user with the provided name, email, and password.",
+                "operationId": "1716c95d7ee32950f11034c5cd88c6aa",
+                "requestBody": {
+                    "description": "User details",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User registered successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/countries": {
+            "post": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Insert countries into the database",
+                "description": "Inserts countries into the database from an external API.",
+                "operationId": "insertCountries",
+                "responses": {
+                    "200": {
+                        "description": "Countries inserted successfully"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/phone-books": {
+            "get": {
+                "tags": [
+                    "PhoneBooks"
+                ],
+                "summary": "Get all phone book entries",
+                "description": "Retrieves all phone book entries.",
+                "operationId": "getPhoneBooks",
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Offset for pagination",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Limit per page for pagination (max: 20)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of phone book entries",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PhoneBook"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "PhoneBooks"
+                ],
+                "summary": "Store a new phone book entry",
+                "description": "Stores a new phone book entry.",
+                "operationId": "storePhoneBook",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "country_id",
+                                    "timezone_id",
+                                    "first_name",
+                                    "phone_number",
+                                    "insertedOn",
+                                    "updatedOn"
+                                ],
+                                "properties": {
+                                    "country_id": {
+                                        "description": "ID of the country",
+                                        "type": "integer"
+                                    },
+                                    "timezone_id": {
+                                        "description": "ID of the timezone",
+                                        "type": "integer"
+                                    },
+                                    "first_name": {
+                                        "description": "First name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "last_name": {
+                                        "description": "Last name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "phone_number": {
+                                        "description": "Phone number (format: +XX XXX XXXXXXXX)",
+                                        "type": "string",
+                                        "pattern": "^\\+\\d{2}\\s\\d{3}\\s\\d{9}$"
+                                    },
+                                    "insertedOn": {
+                                        "description": "Date of insertion",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "updatedOn": {
+                                        "description": "Date of update",
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Phone book entry stored successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PhoneBook"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/phone-books/{id}": {
+            "get": {
+                "tags": [
+                    "PhoneBooks"
+                ],
+                "summary": "Get a specific phone book entry",
+                "description": "Retrieves a specific phone book entry by its ID.",
+                "operationId": "getPhoneBookById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the phone book entry",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Phone book entry found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PhoneBook"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Phone book entry not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "PhoneBooks"
+                ],
+                "summary": "Update an existing phone book entry",
+                "description": "Updates an existing phone book entry.",
+                "operationId": "updatePhoneBook",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the phone book entry to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "country_id",
+                                    "timezone_id",
+                                    "first_name",
+                                    "phone_number",
+                                    "insertedOn",
+                                    "updatedOn"
+                                ],
+                                "properties": {
+                                    "country_id": {
+                                        "description": "ID of the country",
+                                        "type": "integer"
+                                    },
+                                    "timezone_id": {
+                                        "description": "ID of the timezone",
+                                        "type": "integer"
+                                    },
+                                    "first_name": {
+                                        "description": "First name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "last_name": {
+                                        "description": "Last name",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "phone_number": {
+                                        "description": "Phone number (format: +XX XXX XXXXXXXX)",
+                                        "type": "string",
+                                        "pattern": "^\\+\\d{2}\\s\\d{3}\\s\\d{9}$"
+                                    },
+                                    "insertedOn": {
+                                        "description": "Date of insertion",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "updatedOn": {
+                                        "description": "Date of update",
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Phone book entry updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PhoneBook"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Phone book entry not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "PhoneBooks"
+                ],
+                "summary": "Delete a phone book entry",
+                "description": "Deletes a phone book entry by its ID.",
+                "operationId": "deletePhoneBook",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the phone book entry",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Phone book entry deleted successfully"
+                    },
+                    "404": {
+                        "description": "Phone book entry not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/timezones": {
+            "post": {
+                "tags": [
+                    "Timezones"
+                ],
+                "summary": "Insert timezones into the database",
+                "description": "Inserts timezones into the database from an external API.",
+                "operationId": "insertTimezones",
+                "responses": {
+                    "200": {
+                        "description": "Timezones inserted successfully"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PhoneBook": {
+                "required": [
+                    "country_id",
+                    "timezone_id",
+                    "first_name",
+                    "phone_number",
+                    "insertedOn",
+                    "updatedOn"
+                ],
+                "properties": {
+                    "country_id": {
+                        "description": "ID of the country",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "timezone_id": {
+                        "description": "ID of the timezone",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "first_name": {
+                        "description": "First name of the person",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "John"
+                    },
+                    "last_name": {
+                        "description": "Last name of the person",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Doe"
+                    },
+                    "phone_number": {
+                        "description": "Phone number of the person (format: +XX XXX XXXXXXXX)",
+                        "type": "string",
+                        "pattern": "^\\+\\d{2}\\s\\d{3}\\s\\d{9}$",
+                        "example": "+01 123 4567890"
+                    },
+                    "insertedOn": {
+                        "description": "Date of insertion",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2022-04-02"
+                    },
+                    "updatedOn": {
+                        "description": "Date of update",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2022-04-02"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
